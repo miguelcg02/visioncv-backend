@@ -1,0 +1,9 @@
+Name: Julian Caro
+Phone: +57 321 819 6732
+Address: Me quiero matar
+Email: adrephos@gmail.com
+
+Date: Fecha no especificada
+Name: ABC Corp
+Place: Lugar no especificado
+Description: Trabajé como analista de datos durante tres años. Mi rol principal fue extraer y analizar datos para apoyar decisiones estratégicas utilizando herramientas como Python y SQL. Participé en proyectos como la implementación de un modelo de segmentación de clientes que aumentó las conversiones en un 15%.
