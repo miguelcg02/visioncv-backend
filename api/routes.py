@@ -5,7 +5,8 @@ from fastapi import APIRouter, File, UploadFile, Form
 from application.dtos.form_dto import FormDTO
 from application.generate_cv import GenerateCV
 from infrastructure.whisper_stt_service import WhisperSTTService
-from infrastructure.txt_cv_generator_service import TxtCVGeneratorService
+# from infrastructure.txt_cv_generator_service import TxtCVGeneratorService
+from infrastructure.pdf_cv_generator_service import PdfCVGeneratorService
 from infrastructure.gpt_data_formatter_service import GPTDataFormatterService
 
 
@@ -23,7 +24,8 @@ deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
 gpt_data_formatter_service = GPTDataFormatterService(
     open_ai_client, deployment if deployment else "gtp-4o")
 whisper_stt_service = WhisperSTTService(open_ai_client)
-txt_cv_generator_service = TxtCVGeneratorService()
+# txt_cv_generator_service = TxtCVGeneratorService()
+pdf_cv_generator_service = PdfCVGeneratorService()
 
 
 @router.post("/form/upload")
@@ -40,7 +42,7 @@ async def upload_form(
         form_dto,
         whisper_stt_service,
         gpt_data_formatter_service,
-        txt_cv_generator_service
+        pdf_cv_generator_service
     )
 
     cv_path = generate_cv_use_case.generate()
