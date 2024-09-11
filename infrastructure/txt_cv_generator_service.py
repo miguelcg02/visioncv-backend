@@ -28,6 +28,6 @@ class TxtCVGeneratorService(CVGeneratorService):
                 f"Description: {exp.description}")
 
         path = "/static/cv.txt"
-        with open(f".{path}", 'w', encoding="utf-8") as file:
+        with open(f"./{path}", 'w', encoding="utf-8") as file:
             file.write(cv)
         return path
