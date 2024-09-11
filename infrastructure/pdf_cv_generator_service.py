@@ -51,6 +51,6 @@ class PdfCVGeneratorService(CVGeneratorService):
         html_content = html_content.replace(
             "{{ experience }}", experience_html)
 
-        path = "./static/cv.pdf"
-        pdfkit.from_string(html_content, path, options=options)
+        path = "/static/cv.pdf"
+        pdfkit.from_string(html_content, f"./{path}", options=options)
         return path
