@@ -8,3 +8,4 @@ class FormDTO:
     address: str
     email: str
     experience_audio: bytes
+    education_audio: bytes

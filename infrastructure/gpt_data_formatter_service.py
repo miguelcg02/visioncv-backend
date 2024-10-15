@@ -63,3 +63,25 @@ class GPTDataFormatterService(DataFormatterService):
             )
             for exp in experience_array["experiencias"]
         ]
+
+    def create_education_section(
+            self, education: str) -> List[CVDateNamePlaceField]:
+        education_array = self.__format_data(
+            task=("Eres un asistente de recursos humanos y tienes que "
+                  "transcribir la educación de un candidato"),
+            data_format=("campos:\neducation: array de educación\n\n"
+                         "Cada educación cuenta con los siguientes datos:\n"
+                         "date: Fecha de inicio y fin del estudio\n"
+                         "name: Nombre de la institución\n"
+                         "place: Lugar de estudio\n"
+                         "description: Descripción del estudio\n\n"),
+            data=education)
+        return [
+            CVDateNamePlaceField(
+                date=exp["date"],
+                name=exp["name"],
+                place=exp["place"],
+                description=exp["description"]
+            )
+            for exp in education_array["education"]
+        ]
