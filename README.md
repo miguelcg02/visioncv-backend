@@ -1,8 +1,9 @@
 # Vision CV - Backend
 
 Make sure you have the following installed:
-- **Python** (version 3.12 or later)
-- **Poetry** (the dependency management tool for Python)
+- **[Python](https://www.python.org/downloads/)** (version 3.12 or later)
+- **[Poetry](https://python-poetry.org/docs/#installation)** (the dependency management tool for Python)
+- **[Wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)** (the tool used to convert HTML to PDF)
 
 ## Installation
 
