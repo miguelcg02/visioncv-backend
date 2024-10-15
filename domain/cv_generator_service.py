@@ -15,5 +15,6 @@ class CVGeneratorService(metaclass=abc.ABCMeta):
         email: str,
         experience: List[CVDateNamePlaceField],
         education: List[CVDateNamePlaceField],
+        skills: List[str]
     ) -> str:
         raise NotImplementedError

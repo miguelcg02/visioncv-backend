@@ -42,6 +42,7 @@ class PdfCVGeneratorService(CVGeneratorService):
         email: str,
         experience: List[CVDateNamePlaceField],
         education: List[CVDateNamePlaceField],
+        skills: List[str],
     ) -> str:
 
         template_path = './infrastructure/templates/cv.html'
@@ -58,6 +59,8 @@ class PdfCVGeneratorService(CVGeneratorService):
 
         html_content = self.__add_name_date_section(
             html_content, education, "education")
+
+        html_content = html_content.replace("{{ skills }}", ", ".join(skills))
 
         path = "static/cv.pdf"
         pdfkit.from_string(html_content, f"./{path}", options=self.options)

@@ -85,3 +85,12 @@ class GPTDataFormatterService(DataFormatterService):
             )
             for exp in education_array["education"]
         ]
+
+    def create_skills_section(
+            self, skills: str) -> List[str]:
+        skills_array = self.__format_data(
+            task=("Eres un asistente de recursos humanos y tienes que "
+                  "transcribir las habilidades de un candidato"),
+            data_format=("campos:\nskills: array de habilidades\n\n"),
+            data=skills)
+        return skills_array["skills"]

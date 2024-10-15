@@ -21,6 +21,8 @@ class GenerateCV:
             self.form_dto.education_audio)
         education = self.data_formatter_service.create_education_section(
             education_str)
+        skills_str = self.stt_service.transcribe(self.form_dto.skills_audio)
+        skills = self.data_formatter_service.create_skills_section(skills_str)
 
         cv = self.cv_generator_service.generate(
             self.form_dto.name,
@@ -28,6 +30,7 @@ class GenerateCV:
             self.form_dto.address,
             self.form_dto.email,
             experience,
-            education
-        )
+            education,
+            skills)
+
         return cv
