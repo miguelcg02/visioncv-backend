@@ -69,3 +69,19 @@ async def upload_experience(
         return {"success": False,
                 "error": ("Ocurrió un error al transcribir el audio, "
                           "inténtalo de nuevo")}
+
+
+@router.post("/form/education", status_code=status.HTTP_200_OK)
+async def upload_education(
+    response: Response,
+    audio: UploadFile = File(...)
+):
+    try:
+        audio_bytes = await audio.read()
+        text = whisper_stt_service.transcribe(audio_bytes)
+        return {"success": True, "data": {"education": text}}
+    except Exception:
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return {"success": False,
+                "error": ("Ocurrió un error al transcribir el audio, "
+                          "inténtalo de nuevo")}
