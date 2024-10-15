@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
-from fastapi import APIRouter, File, UploadFile, Form
+from fastapi import APIRouter, File, UploadFile, Form, Response, status
 from application.dtos.form_dto import FormDTO
 from application.generate_cv import GenerateCV
 from infrastructure.whisper_stt_service import WhisperSTTService
@@ -34,10 +34,17 @@ async def upload_form(
     phone: str = Form(...),
     address: str = Form(...),
     email: str = Form(...),
-    experience_audio: UploadFile = File(...)
+    experience_audio: UploadFile = File(...),
+    education_audio: UploadFile = File(...),
+    skills_audio: UploadFile = File(...)
 ):
-    audio = await experience_audio.read()
-    form_dto = FormDTO(name, phone, address, email, audio)
+    experience_bytes = await experience_audio.read()
+    education_bytes = await education_audio.read()
+    skills_bytes = await skills_audio.read()
+
+    form_dto = FormDTO(name, phone, address, email,
+                       experience_bytes, education_bytes, skills_bytes)
+
     generate_cv_use_case = GenerateCV(
         form_dto,
         whisper_stt_service,
@@ -45,8 +52,20 @@ async def upload_form(
         pdf_cv_generator_service
     )
 
-    cv_path = generate_cv_use_case.generate()
+    return {"cv_path": generate_cv_use_case.generate()}
 
-    response = {"cv_path": cv_path}
 
-    return response
+@router.post("/form/experience", status_code=status.HTTP_200_OK)
+async def upload_experience(
+    response: Response,
+    audio: UploadFile = File(...)
+):
+    try:
+        audio_bytes = await audio.read()
+        text = whisper_stt_service.transcribe(audio_bytes)
+        return {"success": True, "data": {"experience": text}}
+    except Exception:
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return {"success": False,
+                "error": ("Ocurrió un error al transcribir el audio, "
+                          "inténtalo de nuevo")}
