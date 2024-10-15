@@ -7,13 +7,32 @@ from domain.data_formatter_service import CVDateNamePlaceField
 
 @dataclass
 class PdfCVGeneratorService(CVGeneratorService):
-    def __generate_subsection(self, title, place, date, description):
+    options = {
+        'page-size': 'A4',
+        'margin-top': '20mm',
+        'margin-right': '20mm',
+        'margin-bottom': '20mm',
+        'margin-left': '20mm',
+        'encoding': "UTF-8",
+        # Enable access to local files if using images or stylesheets
+        'enable-local-file-access': None
+    }
+
+    def __generate_name_date_section(self, title, place, date, description):
         return f"""
             <div class="subsection">
                 <h3> {title} - {place}</h3>
                 <p>{date}</p>
                 <p>{description}</p>
             </div>\n"""
+
+    def __add_name_date_section(self, html_str, section_data, section_name):
+        data_html = ""
+        for datum in section_data:
+            data_html += self.__generate_name_date_section(
+                datum.name, datum.place, datum.date, datum.description)
+        return html_str.replace(
+            "{{ "+section_name+" }}", data_html)
 
     def generate(
         self,
@@ -22,6 +41,7 @@ class PdfCVGeneratorService(CVGeneratorService):
         address: str,
         email: str,
         experience: List[CVDateNamePlaceField],
+        education: List[CVDateNamePlaceField],
     ) -> str:
 
         template_path = './infrastructure/templates/cv.html'
@@ -33,24 +53,12 @@ class PdfCVGeneratorService(CVGeneratorService):
         html_content = html_content.replace("{{ email }}", email)
         html_content = html_content.replace("{{ address }}", address)
 
-        options = {
-            'page-size': 'A4',
-            'margin-top': '20mm',
-            'margin-right': '20mm',
-            'margin-bottom': '20mm',
-            'margin-left': '20mm',
-            'encoding': "UTF-8",
-            # Enable access to local files if using images or stylesheets
-            'enable-local-file-access': None
-        }
+        html_content = self.__add_name_date_section(
+            html_content, experience, "experience")
 
-        experience_html = ""
-        for exp in experience:
-            experience_html += self.__generate_subsection(
-                exp.name, exp.place, exp.date, exp.description)
-        html_content = html_content.replace(
-            "{{ experience }}", experience_html)
+        html_content = self.__add_name_date_section(
+            html_content, education, "education")
 
         path = "static/cv.pdf"
-        pdfkit.from_string(html_content, f"./{path}", options=options)
+        pdfkit.from_string(html_content, f"./{path}", options=self.options)
         return path

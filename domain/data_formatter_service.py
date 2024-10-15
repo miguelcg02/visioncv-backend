@@ -17,3 +17,8 @@ class DataFormatterService(metaclass=abc.ABCMeta):
     def create_experience_section(
             self, experience: str) -> List[CVDateNamePlaceField]:
         raise NotImplementedError
+
+    @abc.abstractmethod
+    def create_education_section(
+            self, education: str) -> List[CVDateNamePlaceField]:
+        raise NotImplementedError
