@@ -13,22 +13,20 @@ class GenerateCV:
     cv_generator_service: CVGeneratorService
 
     def generate(self):
-        experience_str = self.stt_service.transcribe(
-            self.form_dto.experience_audio)
         experience = self.data_formatter_service.create_experience_section(
-            experience_str)
-        education_str = self.stt_service.transcribe(
-            self.form_dto.education_audio)
+            self.form_dto.experience)
+
         education = self.data_formatter_service.create_education_section(
-            education_str)
-        skills_str = self.stt_service.transcribe(self.form_dto.skills_audio)
-        skills = self.data_formatter_service.create_skills_section(skills_str)
+            self.form_dto.education)
+
+        skills = self.data_formatter_service.create_skills_section(
+            self.form_dto.skills)
 
         cv = self.cv_generator_service.generate(
-            self.form_dto.name,
-            self.form_dto.phone,
-            self.form_dto.address,
-            self.form_dto.email,
+            self.form_dto.personal_details.name,
+            self.form_dto.personal_details.phone,
+            self.form_dto.personal_details.address,
+            self.form_dto.personal_details.email,
             experience,
             education,
             skills)

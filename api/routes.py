@@ -1,11 +1,10 @@
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
-from fastapi import APIRouter, File, UploadFile, Form, Response, status
+from fastapi import APIRouter, File, UploadFile, Response, status
 from application.dtos.form_dto import FormDTO
 from application.generate_cv import GenerateCV
 from infrastructure.whisper_stt_service import WhisperSTTService
-# from infrastructure.txt_cv_generator_service import TxtCVGeneratorService
 from infrastructure.pdf_cv_generator_service import PdfCVGeneratorService
 from infrastructure.gpt_data_formatter_service import GPTDataFormatterService
 
@@ -24,27 +23,11 @@ deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
 gpt_data_formatter_service = GPTDataFormatterService(
     open_ai_client, deployment if deployment else "gtp-4o")
 whisper_stt_service = WhisperSTTService(open_ai_client)
-# txt_cv_generator_service = TxtCVGeneratorService()
 pdf_cv_generator_service = PdfCVGeneratorService()
 
 
 @router.post("/form/upload")
-async def upload_form(
-    name: str = Form(...),
-    phone: str = Form(...),
-    address: str = Form(...),
-    email: str = Form(...),
-    experience_audio: UploadFile = File(...),
-    education_audio: UploadFile = File(...),
-    skills_audio: UploadFile = File(...)
-):
-    experience_bytes = await experience_audio.read()
-    education_bytes = await education_audio.read()
-    skills_bytes = await skills_audio.read()
-
-    form_dto = FormDTO(name, phone, address, email,
-                       experience_bytes, education_bytes, skills_bytes)
-
+async def upload_form(form_dto: FormDTO):
     generate_cv_use_case = GenerateCV(
         form_dto,
         whisper_stt_service,

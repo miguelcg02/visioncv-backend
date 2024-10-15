@@ -2,11 +2,16 @@ from dataclasses import dataclass
 
 
 @dataclass
-class FormDTO:
+class PersonalDetails:
     name: str
     phone: str
     address: str
     email: str
-    experience_audio: bytes
-    education_audio: bytes
-    skills_audio: bytes
+
+
+@dataclass
+class FormDTO:
+    personal_details: PersonalDetails
+    experience: str
+    education: str
+    skills: str
