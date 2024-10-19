@@ -28,14 +28,19 @@ pdf_cv_generator_service = PdfCVGeneratorService()
 
 @router.post("/form/upload")
 async def upload_form(form_dto: FormDTO):
-    generate_cv_use_case = GenerateCV(
-        form_dto,
-        whisper_stt_service,
-        gpt_data_formatter_service,
-        pdf_cv_generator_service
-    )
+    try:
+        generate_cv_use_case = GenerateCV(
+            form_dto,
+            whisper_stt_service,
+            gpt_data_formatter_service,
+            pdf_cv_generator_service
+        )
 
-    return {"cv_path": generate_cv_use_case.generate()}
+        return {"success": True,
+                "data": {"cv_path": generate_cv_use_case.generate()}}
+    except Exception:
+        return {"success": False,
+                "error": "Ocurrió un error al generar el CV"}
 
 
 @router.post("/form/experience", status_code=status.HTTP_200_OK)
