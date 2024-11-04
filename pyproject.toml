@@ -17,6 +17,7 @@ openai = "^1.44.0"
 python-dotenv = "^1.0.1"
 python-decouple = "^3.8"
 pdfkit = "^1.0.0"
+fastapi-clerk-auth = "^0.0.5"
 
 
 [build-system]
