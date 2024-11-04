@@ -1,8 +1,7 @@
-from typing import List
 from dataclasses import dataclass
 import pdfkit
+from domain.cv import CV
 from domain.cv_generator_service import CVGeneratorService
-from domain.data_formatter_service import CVDateNamePlaceField
 
 
 @dataclass
@@ -34,33 +33,26 @@ class PdfCVGeneratorService(CVGeneratorService):
         return html_str.replace(
             "{{ "+section_name+" }}", data_html)
 
-    def generate(
-        self,
-        name: str,
-        phone: str,
-        address: str,
-        email: str,
-        experience: List[CVDateNamePlaceField],
-        education: List[CVDateNamePlaceField],
-        skills: List[str],
-    ) -> str:
+    def generate(self, cv: CV) -> str:
 
         template_path = './infrastructure/templates/cv.html'
         with open(template_path, 'r', encoding='utf-8') as file:
             html_content = file.read()
 
-        html_content = html_content.replace("{{ name }}", name)
-        html_content = html_content.replace("{{ phone }}", phone)
-        html_content = html_content.replace("{{ email }}", email)
-        html_content = html_content.replace("{{ address }}", address)
-
+        html_content = html_content.replace(
+            "{{ name }}", cv.personal_info.name)
+        html_content = html_content.replace(
+            "{{ phone }}", cv.personal_info.phone)
+        html_content = html_content.replace(
+            "{{ email }}", cv.personal_info.email)
+        html_content = html_content.replace(
+            "{{ address }}", cv.personal_info.address)
         html_content = self.__add_name_date_section(
-            html_content, experience, "experience")
-
+            html_content, cv.experience, "experience")
         html_content = self.__add_name_date_section(
-            html_content, education, "education")
-
-        html_content = html_content.replace("{{ skills }}", ", ".join(skills))
+            html_content, cv.education, "education")
+        html_content = html_content.replace(
+            "{{ skills }}", ", ".join(cv.skills))
 
         path = "static/cv.pdf"
         pdfkit.from_string(html_content, f"./{path}", options=self.options)

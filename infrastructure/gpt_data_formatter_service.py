@@ -2,8 +2,8 @@ import json
 from typing import List, Dict
 from dataclasses import dataclass, field
 from openai import OpenAI
-from domain.data_formatter_service import (
-    DataFormatterService, CVDateNamePlaceField)
+from domain.cv import DateNamePlaceField
+from domain.data_formatter_service import DataFormatterService
 
 
 @dataclass
@@ -43,7 +43,7 @@ class GPTDataFormatterService(DataFormatterService):
             raise ValueError("Error parsing data") from e
 
     def create_experience_section(
-            self, experience: str) -> List[CVDateNamePlaceField]:
+            self, experience: str) -> List[DateNamePlaceField]:
         experience_array = self.__format_data(
             task=("Eres un asistente de recursos humanos y tienes que "
                   "transcribir la experiencia laboral de un candidato"),
@@ -55,7 +55,7 @@ class GPTDataFormatterService(DataFormatterService):
                          "description: Descripción del trabajo\n\n"),
             data=experience)
         return [
-            CVDateNamePlaceField(
+            DateNamePlaceField(
                 date=exp["date"],
                 name=exp["name"],
                 place=exp["place"],
@@ -65,7 +65,7 @@ class GPTDataFormatterService(DataFormatterService):
         ]
 
     def create_education_section(
-            self, education: str) -> List[CVDateNamePlaceField]:
+            self, education: str) -> List[DateNamePlaceField]:
         education_array = self.__format_data(
             task=("Eres un asistente de recursos humanos y tienes que "
                   "transcribir la educación de un candidato"),
@@ -77,7 +77,7 @@ class GPTDataFormatterService(DataFormatterService):
                          "description: Descripción del estudio\n\n"),
             data=education)
         return [
-            CVDateNamePlaceField(
+            DateNamePlaceField(
                 date=exp["date"],
                 name=exp["name"],
                 place=exp["place"],
