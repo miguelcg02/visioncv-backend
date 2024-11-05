@@ -1,8 +1,15 @@
 from decouple import os
 from dotenv import load_dotenv
 from fastapi import APIRouter, File, UploadFile, Response, status, Depends
-from fastapi_clerk_auth import ClerkConfig, ClerkHTTPBearer, HTTPAuthorizationCredentials
-from api.di import get_generate_cv_use_case, whisper_stt_service
+from fastapi_clerk_auth import (
+    ClerkConfig,
+    ClerkHTTPBearer,
+    HTTPAuthorizationCredentials)
+from api.di import (
+    get_generate_cv_use_case,
+    get_user_cvs_use_case,
+    whisper_stt_service,
+    get_upload_cv_use_case)
 from application.dtos.form_dto import FormDTO
 
 
@@ -17,6 +24,44 @@ clerk_config = ClerkConfig(
 clerk_auth_guard = ClerkHTTPBearer(config=clerk_config)
 
 
+@router.get("/cv/download/{cv_id}")
+async def download_cv(
+        cv_id: str,
+        credentials: HTTPAuthorizationCredentials | None = Depends(
+            clerk_auth_guard)
+):
+    try:
+        if credentials is None:
+            return {"success": False,
+                    "error": "No se encontraron credenciales"}
+        cv_path = get_generate_cv_use_case(cv_id).generate()
+        return {"success": True,
+                "data": {"cv_path": cv_path}}
+    except Exception as e:
+        print(e)
+        return {"success": False,
+                "error": "Ocurrió un error al descargar el CV"}
+
+
+@router.get("/cv/all")
+async def get_user_cvs(
+        credentials: HTTPAuthorizationCredentials | None = Depends(
+            clerk_auth_guard)
+):
+    try:
+        if credentials is None:
+            return {"success": False,
+                    "error": "No se encontraron credenciales"}
+        user_id = credentials.model_dump()["decoded"]["sub"]
+        cvs = get_user_cvs_use_case(user_id).get()
+        return {"success": True,
+                "data": {"cvs": cvs}}
+    except Exception as e:
+        print(e)
+        return {"success": False,
+                "error": "Ocurrió un error al descargar el CV"}
+
+
 @router.post("/form/upload")
 async def upload_form(
         form_dto: FormDTO,
@@ -24,13 +69,16 @@ async def upload_form(
             clerk_auth_guard)
 ):
     try:
-        generate_cv_use_case = get_generate_cv_use_case(form_dto)
+        if credentials is None:
+            return {"success": False,
+                    "error": "No se encontraron credenciales"}
+        cv_id = get_upload_cv_use_case(form_dto).upload(
+            credentials.model_dump()["decoded"]["sub"])
 
-        # add db logic to store the form data
-        print(credentials)
         return {"success": True,
-                "data": {"cv_path": generate_cv_use_case.generate()}}
-    except Exception:
+                "data": {"cv_id": cv_id}}
+    except Exception as e:
+        print(e)
         return {"success": False,
                 "error": "Ocurrió un error al generar el CV"}
 
