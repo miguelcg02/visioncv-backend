@@ -9,6 +9,7 @@ from api.di import (
     get_generate_cv_use_case,
     get_user_cvs_use_case,
     whisper_stt_service,
+    gpt_suggestions_service,
     get_upload_cv_use_case)
 from application.dtos.form_dto import FormDTO
 
@@ -91,14 +92,21 @@ async def upload_experience(
         clerk_auth_guard)
 ):
     try:
+        if credentials is None:
+            return {"success": False,
+                    "error": "No se encontraron credenciales"}
+
         audio_bytes = await audio.read()
         text = whisper_stt_service.transcribe(audio_bytes)
+        suggestions = gpt_suggestions_service.suggest_from_experience(text)
 
-        # add db logic to store the experience
-        print(credentials)
-        return {"success": True, "data": {"experience": text}}
-    except Exception:
+        return {"success": True, "data": {
+            "experience": text,
+            "suggestions": suggestions
+        }}
+    except Exception as e:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        print(e)
         return {"success": False,
                 "error": ("Ocurrió un error al transcribir el audio, "
                           "inténtalo de nuevo")}
@@ -112,12 +120,18 @@ async def upload_education(
         clerk_auth_guard)
 ):
     try:
+        if credentials is None:
+            return {"success": False,
+                    "error": "No se encontraron credenciales"}
+
         audio_bytes = await audio.read()
         text = whisper_stt_service.transcribe(audio_bytes)
+        suggestions = gpt_suggestions_service.suggest_from_education(text)
 
-        # add db logic to store the education
-        print(credentials)
-        return {"success": True, "data": {"education": text}}
+        return {"success": True, "data": {
+            "education": text,
+            "suggestions": suggestions
+        }}
     except Exception:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return {"success": False,
@@ -133,12 +147,18 @@ async def upload_skills(
         clerk_auth_guard)
 ):
     try:
+        if credentials is None:
+            return {"success": False,
+                    "error": "No se encontraron credenciales"}
+
         audio_bytes = await audio.read()
         text = whisper_stt_service.transcribe(audio_bytes)
+        suggestions = gpt_suggestions_service.suggest_from_skills(text)
 
-        # add db logic to store the skills
-        print(credentials)
-        return {"success": True, "data": {"skills": text}}
+        return {"success": True, "data": {
+            "skills": text,
+            "suggestions": suggestions
+        }}
     except Exception:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return {"success": False,
