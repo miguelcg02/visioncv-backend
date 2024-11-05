@@ -10,6 +10,7 @@ from application.generate_cv import GenerateCV
 from application.upload_cv import UploadCV
 from application.user_cv import UserCVs
 from infrastructure.gpt_data_formatter_service import GPTDataFormatterService
+from infrastructure.gpt_suggestions_service import GPTSuggestionsService
 from infrastructure.mongodb_cv_repository import MongoDBCVRepository
 from infrastructure.pdf_cv_generator_service import PdfCVGeneratorService
 from infrastructure.whisper_stt_service import WhisperSTTService
@@ -26,6 +27,10 @@ deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
 
 gpt_data_formatter_service = GPTDataFormatterService(
     open_ai_client, deployment if deployment else "gtp-4o")
+
+gpt_suggestions_service = GPTSuggestionsService(
+    open_ai_client, deployment if deployment else "gtp-4o")
+
 whisper_stt_service = WhisperSTTService(open_ai_client)
 pdf_cv_generator_service = PdfCVGeneratorService()
 
