@@ -18,6 +18,7 @@ python-dotenv = "^1.0.1"
 python-decouple = "^3.8"
 pdfkit = "^1.0.0"
 fastapi-clerk-auth = "^0.0.5"
+pymongo = {extras = ["srv"], version = "^4.10.1"}
 
 
 [build-system]

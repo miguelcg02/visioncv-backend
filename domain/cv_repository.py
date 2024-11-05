@@ -13,5 +13,5 @@ class CVRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_all(self, user_id) -> List[CV]:
+    def get_all(self, user_id) -> List[dict[str, str]]:
         raise NotImplementedError

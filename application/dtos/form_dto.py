@@ -11,6 +11,7 @@ class PersonalDetails:
 
 @dataclass
 class FormDTO:
+    cv_name: str
     personal_details: PersonalDetails
     experience: str
     education: str
