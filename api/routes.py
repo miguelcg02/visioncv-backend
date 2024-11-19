@@ -132,8 +132,9 @@ async def upload_education(
             "education": text,
             "suggestions": suggestions
         }}
-    except Exception:
+    except Exception as e:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        print(e)
         return {"success": False,
                 "error": ("Ocurrió un error al transcribir el audio, "
                           "inténtalo de nuevo")}
@@ -159,8 +160,9 @@ async def upload_skills(
             "skills": text,
             "suggestions": suggestions
         }}
-    except Exception:
+    except Exception as e:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        print(e)
         return {"success": False,
                 "error": ("Ocurrió un error al transcribir el audio, "
                           "inténtalo de nuevo")}
